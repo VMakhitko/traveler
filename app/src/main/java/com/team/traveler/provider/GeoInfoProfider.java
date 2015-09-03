@@ -30,7 +30,7 @@ public class GeoInfoProfider {
             double rad = Math.toRadians(degree);
 
             LatLng position = new LatLng(location.latitude + rx * Math.cos(rad) - ry * Math.sin(rad),
-                    location.longitude + rx * Math.sin(rad) + ry);
+                    location.longitude + rx * Math.sin(rad) + ry * Math.cos(rad));
             BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(degree);
             boolean draggable = true;
             MarkerOptions options = new MarkerOptions().position(position).icon(icon).draggable(draggable);

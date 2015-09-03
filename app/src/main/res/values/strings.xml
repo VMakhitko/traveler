@@ -3,4 +3,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="button_places">Places</string>
+    <string name="button_tracks">Tracks</string>
+    <string name="button_search">Search</string>
+    <string name="button_my">My</string>
 </resources>

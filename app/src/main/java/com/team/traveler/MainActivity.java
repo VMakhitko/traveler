@@ -14,6 +14,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.team.traveler.provider.GeoInfoProfider;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private final String TAG = MainActivity.class.getSimpleName();
@@ -26,28 +27,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     private SupportMapFragment supportMapFragment;
     private GoogleMap map;
+    private LatLng currentLoc;
+
+    private GeoInfoProfider geoInfoProfider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*Init supportMapFragment*/
-        supportMapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map_fragment);
-        supportMapFragment.getMapAsync(this);
-        map = supportMapFragment.getMap();
-        map.setMyLocationEnabled(true);
-        GoogleMap.OnMyLocationChangeListener onMyLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                Log.d(TAG, "onMyLocationChange");
-                LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
-            }
-        };
-        map.setOnMyLocationChangeListener(onMyLocationChangeListener);
-
+        /*Init map*/
+        initMap();
+        /*Init buttons*/
         initButtons();
+
+        /*Add markers*/
+        geoInfoProfider = new GeoInfoProfider();
+        if (currentLoc == null) Log.d(TAG, "currentLoc == null");
+
     }
 
     @Override
@@ -76,6 +73,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initMap() {
+        supportMapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map_fragment);
+        supportMapFragment.getMapAsync(this);
+        map = supportMapFragment.getMap();
+        map.setMyLocationEnabled(true);
+        GoogleMap.OnMyLocationChangeListener onMyLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                Log.d(TAG, "onMyLocationChange");
+                currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16.0f));
+                geoInfoProfider.setCircleMarkers(map, currentLoc);
+            }
+        };
+        map.setOnMyLocationChangeListener(onMyLocationChangeListener);
     }
 
     private void initButtons() {

@@ -86,7 +86,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d(TAG, "onMyLocationChange");
                 currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16.0f));
-                geoInfoProfider.setCircleMarkers(map, currentLoc);
             }
         };
         map.setOnMyLocationChangeListener(onMyLocationChangeListener);
@@ -98,6 +97,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "Places button clicked");
+                map.clear();
+                if (currentLoc != null) {
+                    geoInfoProfider.setCircleMarkers(map, currentLoc);
+                }
             }
         });
 
@@ -106,6 +109,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "Tracks button clicked");
+                map.clear();
+                /*TODO: Add polylines*/
             }
         });
 

@@ -9,7 +9,6 @@
         android:maxSdkVersion="22" />
     <permission android:name="com.gis.map.permission.MAPS_RECEIVER"
         android:protectionLevel="signature"/>
-    <uses-permission android:name="com.gis.map.permission.MAPS_RECEIVER"/>
 
     <uses-permission android:name="ANDROID.PERMISSION.INTERNET" />
     <uses-permission android:name="ANDROID.PERMISSION.ACCESS_NETWORK_STATE" />

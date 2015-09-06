@@ -8,7 +8,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -16,7 +22,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.team.traveler.provider.GeoInfoProfider;
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener {
     private final String TAG = MainActivity.class.getSimpleName();
 
     /*Main 4 buttons*/
@@ -25,9 +31,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Button mSearch;
     private Button mMy;
 
+    private GoogleApiClient googleApiClient;
     private SupportMapFragment supportMapFragment;
     private GoogleMap map;
     private LatLng currentLoc;
+    private Location lastLocation;
+
 
     private GeoInfoProfider geoInfoProfider;
 
@@ -35,6 +44,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /*Connect to Google Play Service*/
+        buildGoogleApiClient();
 
         /*Init map*/
         initMap();
@@ -73,6 +85,28 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (googleApiClient.isConnected()) {
+            googleApiClient.disconnect();
+        }
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        googleApiClient = new GoogleApiClient.Builder(this)
+            .addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(this)
+            .addApi(LocationServices.API)
+            .build();
     }
 
     private void initMap() {
@@ -129,5 +163,26 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d(TAG, "My button clicked");
             }
         });
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if (lastLocation != null) {
+            /*TODO: Update somesing ^)*/
+        } else {
+            Toast.makeText(this, "No location detected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "Connection suspended");
+        googleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 }

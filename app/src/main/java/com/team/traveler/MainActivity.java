@@ -1,5 +1,6 @@
 package com.team.traveler;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -11,10 +12,15 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,6 +30,8 @@ import com.team.traveler.provider.GeoInfoProfider;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener {
     private final String TAG = MainActivity.class.getSimpleName();
+
+    int PLACE_PICKER_RESULT = 1;
 
     /*Main 4 buttons*/
     private Button mPlaces;
@@ -39,6 +47,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private GeoInfoProfider geoInfoProfider;
+
+//    private PlacePicker.IntentBuilder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +116,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             .addConnectionCallbacks(this)
             .addOnConnectionFailedListener(this)
             .addApi(LocationServices.API)
+            .addApi(Places.GEO_DATA_API)
+            .addApi(Places.PLACE_DETECTION_API)
             .build();
     }
 
@@ -117,7 +129,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleMap.OnMyLocationChangeListener onMyLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
-                Log.d(TAG, "onMyLocationChange");
+//                Log.d(TAG, "onMyLocationChange");
                 currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16.0f));
             }
@@ -132,9 +144,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Log.d(TAG, "Places button clicked");
                 map.clear();
-                if (currentLoc != null) {
-                    geoInfoProfider.setCircleMarkers(map, currentLoc);
-                }
+//                if (currentLoc != null) {
+//                    geoInfoProfider.setCircleMarkers(map, currentLoc);
+//                }
+                /*TODO: Debug PlacePicker. It crashes in some reason :(*/
+//                try {
+//                    builder = new PlacePicker.IntentBuilder();
+//                    startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_RESULT);
+//                } catch (GooglePlayServicesNotAvailableException e) {
+//                    e.printStackTrace();
+//                } catch (GooglePlayServicesRepairableException e) {
+//                    e.printStackTrace();
+//                }
+
             }
         });
 
@@ -169,6 +191,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnected(Bundle bundle) {
         lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (lastLocation != null) {
+            Log.d(TAG, "lastLocation: " + lastLocation.toString());
             /*TODO: Update somesing ^)*/
         } else {
             Toast.makeText(this, "No location detected", Toast.LENGTH_SHORT).show();
@@ -185,4 +208,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
+
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == PLACE_PICKER_RESULT) {
+//            if (resultCode == RESULT_OK) {
+//                Place place = PlacePicker.getPlace(data, MainActivity.this);
+//                String toast = String.format("Place: %s", place.getName());
+//                Toast.makeText(MainActivity.this, toast, Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
 }

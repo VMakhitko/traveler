@@ -4,14 +4,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.team.traveler.places.GooglePlaceReadTask;
 
 /**
  * Created by x0158990 on 03.09.15.
  */
-public class GeoInfoProfider {
-    private final String TAG = GeoInfoProfider.class.getSimpleName();
+public class GeoInfoProvider {
+//    private final String GOOGLE_API_KEY = "AIzaSyDdESl_6pKf0lrRUzeWjmgrK6oBTc92Q18";
+    private final String GOOGLE_API_KEY = "AIzaSyBlHan6h_AtjBYRTaEpXY8IBCDhU5M7_N8";
+
+    private final String TAG = GeoInfoProvider.class.getSimpleName();
 
     public void setCircleMarkers(GoogleMap map, LatLng location) {
         /*Add first marker*/
@@ -37,5 +40,23 @@ public class GeoInfoProfider {
 
             map.addMarker(options);
         }
+    }
+
+    public void findLocalPlaces(GoogleMap map, LatLng latLng, int radius, int types, boolean sensor) {
+        StringBuilder googlePlacesUrl =
+                new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latLng.latitude + "," + latLng.longitude);
+        googlePlacesUrl.append("&radius=" + radius);
+        googlePlacesUrl.append("&types=" + types);
+        googlePlacesUrl.append("&sensor=" + Boolean.toString(sensor));
+        googlePlacesUrl.append("&key=" + GOOGLE_API_KEY);
+
+        /*Async Task for call places from Google*/
+        GooglePlaceReadTask googlePlaceReadTask = new GooglePlaceReadTask();
+        Object[] toPass = new Object[2];
+        toPass[0] = map;
+        toPass[1] = googlePlacesUrl.toString();
+
+        googlePlaceReadTask.execute(toPass);
     }
 }

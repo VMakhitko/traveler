@@ -1,6 +1,5 @@
 package com.team.traveler;
 
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -12,21 +11,18 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.team.traveler.provider.GeoInfoProfider;
+import com.team.traveler.provider.GeoInfoProvider;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener {
     private final String TAG = MainActivity.class.getSimpleName();
@@ -46,7 +42,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Location lastLocation;
 
 
-    private GeoInfoProfider geoInfoProfider;
+    private GeoInfoProvider geoInfoProfider;
 
 //    private PlacePicker.IntentBuilder builder;
 
@@ -64,8 +60,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         initButtons();
 
         /*Add markers*/
-        geoInfoProfider = new GeoInfoProfider();
+        geoInfoProfider = new GeoInfoProvider();
         if (currentLoc == null) Log.d(TAG, "currentLoc == null");
+
+//        PendingResult<PlaceLikelihoodBuffer>
 
     }
 
@@ -144,6 +142,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Log.d(TAG, "Places button clicked");
                 map.clear();
+                if (currentLoc != null) {
+                    geoInfoProfider.findLocalPlaces(map, currentLoc, 100000, Place.TYPE_HOSPITAL, false);
+                }
 //                if (currentLoc != null) {
 //                    geoInfoProfider.setCircleMarkers(map, currentLoc);
 //                }

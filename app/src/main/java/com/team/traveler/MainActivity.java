@@ -194,6 +194,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         if (lastLocation != null) {
             Log.d(TAG, "lastLocation: " + lastLocation.toString());
             /*TODO: Update somesing ^)*/
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(),
+                    lastLocation.getLongitude()), 16.0f));
         } else {
             Toast.makeText(this, "No location detected", Toast.LENGTH_SHORT).show();
         }

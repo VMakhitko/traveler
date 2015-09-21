@@ -143,7 +143,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d(TAG, "Places button clicked");
                 map.clear();
                 if (currentLoc != null) {
-                    geoInfoProfider.findLocalPlaces(map, currentLoc, 100000, Place.TYPE_HOSPITAL, false);
+//                    geoInfoProfider.findLocalGooglePlaces(map, currentLoc, 100000, Place.TYPE_AIRPORT, false);
+                    geoInfoProfider.findLocalWikiPlaces(map, currentLoc, 1000);
                 }
 //                if (currentLoc != null) {
 //                    geoInfoProfider.setCircleMarkers(map, currentLoc);
@@ -193,7 +194,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (lastLocation != null) {
             Log.d(TAG, "lastLocation: " + lastLocation.toString());
-            /*TODO: Update somesing ^)*/
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(),
                     lastLocation.getLongitude()), 16.0f));
         } else {

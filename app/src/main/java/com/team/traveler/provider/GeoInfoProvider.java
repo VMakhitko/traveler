@@ -5,7 +5,8 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.team.traveler.places.GooglePlaceReadTask;
+import com.team.traveler.places.GooglePlacesReadTask;
+import com.team.traveler.places.WikiPlacesReadTask;
 
 /**
  * Created by x0158990 on 03.09.15.
@@ -42,7 +43,7 @@ public class GeoInfoProvider {
         }
     }
 
-    public void findLocalPlaces(GoogleMap map, LatLng latLng, int radius, int types, boolean sensor) {
+    public void findLocalGooglePlaces(GoogleMap map, LatLng latLng, int radius, int types, boolean sensor) {
         StringBuilder googlePlacesUrl =
                 new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlacesUrl.append("location=" + latLng.latitude + "," + latLng.longitude);
@@ -52,11 +53,23 @@ public class GeoInfoProvider {
         googlePlacesUrl.append("&key=" + GOOGLE_API_KEY);
 
         /*Async Task for call places from Google*/
-        GooglePlaceReadTask googlePlaceReadTask = new GooglePlaceReadTask();
+        GooglePlacesReadTask googlePlacesReadTask = new GooglePlacesReadTask();
         Object[] toPass = new Object[2];
         toPass[0] = map;
         toPass[1] = googlePlacesUrl.toString();
 
-        googlePlaceReadTask.execute(toPass);
+        googlePlacesReadTask.execute(toPass);
+    }
+
+    public void findLocalWikiPlaces(GoogleMap map, LatLng latLng, int radius) {
+        StringBuilder wikiPlacesUrl = new StringBuilder("http://api.geonames.org/findNearbyWikipediaJSON?");
+        wikiPlacesUrl.append("lat=" + latLng.latitude + "&lng=" + latLng.longitude);
+        wikiPlacesUrl.append("&username=traveler");
+
+        WikiPlacesReadTask wikiPlacesReadTask = new WikiPlacesReadTask();
+        Object[] toPass = new Object[2];
+        toPass[0] = map;
+        toPass[1] = wikiPlacesUrl.toString();
+        wikiPlacesReadTask.execute(toPass);
     }
 }

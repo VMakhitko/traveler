@@ -13,10 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by kasper on 9/17/15.
+ * Created by kasper on 9/22/15.
  */
-public class ProcessDisplayTask extends AsyncTask<Object, Integer, List<HashMap<String, String>>> {
-    JSONObject googlePlacesJSON;
+public class ProcessWikiDisplayTask extends AsyncTask<Object, Integer, List<HashMap<String, String>>> {
+    JSONObject wikiPlaceJSON;
     GoogleMap map;
 
     @Override
@@ -26,8 +26,8 @@ public class ProcessDisplayTask extends AsyncTask<Object, Integer, List<HashMap<
 
         try {
             map = (GoogleMap) inObj[0];
-            googlePlacesJSON = new JSONObject((String) inObj[1]);
-            googlePlacesList = placeJsonParser.parse(googlePlacesJSON);
+            wikiPlaceJSON = new JSONObject((String) inObj[1]);
+            googlePlacesList = placeJsonParser.parseWiki(wikiPlaceJSON);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -43,10 +43,10 @@ public class ProcessDisplayTask extends AsyncTask<Object, Integer, List<HashMap<
             double lat = Double.parseDouble(googlePlace.get("lat"));
             double lng = Double.parseDouble(googlePlace.get("lng"));
             String placeName = googlePlace.get("place_name");
-            String vicinity = googlePlace.get("vicinity");
+//            String vicinity = googlePlace.get("vicinity");
             LatLng latLng = new LatLng(lat, lng);
             markerOptions.position(latLng);
-            markerOptions.title(placeName + ":" + vicinity);
+            markerOptions.title(placeName);
             map.addMarker(markerOptions);
         }
     }

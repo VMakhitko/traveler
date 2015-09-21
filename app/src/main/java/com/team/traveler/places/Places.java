@@ -16,7 +16,7 @@ import java.util.List;
 public class Places {
     private final String TAG = Places.class.getSimpleName();
 
-    public List<HashMap<String, String>> parse(JSONObject jsonObject) {
+    public List<HashMap<String, String>> parseGoogle(JSONObject jsonObject) {
         JSONArray jsonArray = null;
         try {
             Log.d(TAG, "JSON Object: " + jsonObject.toString());
@@ -28,17 +28,17 @@ public class Places {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return getPlaces(jsonArray);
+        return getPlacesGoogle(jsonArray);
     }
 
-    private List<HashMap<String, String>> getPlaces(JSONArray jsonArray) {
+    private List<HashMap<String, String>> getPlacesGoogle(JSONArray jsonArray) {
         int placeCount = jsonArray.length();
         List<HashMap<String, String>> placeList = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> placeMap = null;
 
         for (int i = 0; i < placeCount; i++) {
             try {
-                placeMap = getPlace((JSONObject) jsonArray.get(i));
+                placeMap = getPlaceGoogle((JSONObject) jsonArray.get(i));
                 placeList.add(placeMap);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -47,7 +47,7 @@ public class Places {
         return placeList;
     }
 
-    private HashMap<String, String> getPlace(JSONObject googlePlaceJson) {
+    private HashMap<String, String> getPlaceGoogle(JSONObject googlePlaceJson) {
         HashMap<String, String> googlePlaceMap = new HashMap<String, String>();
         String placeName = "-NA-";
         String vicinity = "-NA-";
@@ -76,5 +76,56 @@ public class Places {
             e.printStackTrace();
         }
         return googlePlaceMap;
+    }
+
+    public List<HashMap<String, String>> parseWiki(JSONObject jsonObject) {
+        JSONArray jsonArray = null;
+
+        try {
+            jsonArray = jsonObject.getJSONArray("geonames");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return getPlacesWiki(jsonArray);
+    }
+
+    private List<HashMap<String, String>> getPlacesWiki(JSONArray jsonArray) {
+        int placeCount = jsonArray.length();
+        List<HashMap<String, String>> placeList = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> placeMap = null;
+
+        for (int i = 0; i < placeCount; i++) {
+            try {
+                placeMap = getPlaceWiki((JSONObject)jsonArray.get(i));
+                placeList.add(placeMap);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return placeList;
+    }
+
+    private HashMap<String, String> getPlaceWiki(JSONObject wikiJson) {
+        HashMap<String, String> wikiPlaceMap = new HashMap<String, String>();
+        String placeName = "-NA-";
+        String vicinity = "-NA-";
+        String latitude = "";
+        String longitude = "";
+        String reference = "";
+
+        try {
+            if (!wikiJson.isNull("title")) {
+                placeName = wikiJson.getString("title");
+            }
+            latitude = wikiJson.getString("lat");
+            longitude = wikiJson.getString("lng");
+
+            wikiPlaceMap.put("place_name", placeName);
+            wikiPlaceMap.put("lat", latitude);
+            wikiPlaceMap.put("lng", longitude);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return wikiPlaceMap;
     }
 }

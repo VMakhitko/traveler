@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by kasper on 9/17/15.
  */
-public class GooglePlaceReadTask extends AsyncTask<Object, Integer, String> {
+public class PlaceReadTask extends AsyncTask<Object, Integer, String> {
     String googlePlacesData = null;
     GoogleMap map;
 
@@ -29,10 +29,10 @@ public class GooglePlaceReadTask extends AsyncTask<Object, Integer, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        ProcessDisplayTask placesDisplayTask = new ProcessDisplayTask();
-        Object[] toPass = new Object[2];
-        toPass[0] = map;
-        toPass[1] = result;
-        placesDisplayTask.execute(toPass);
+//        ProcessGoogleDisplayTask placesDisplayTask = new ProcessGoogleDisplayTask();
+//        Object[] toPass = new Object[2];
+//        toPass[0] = map;
+//        toPass[1] = result;
+//        placesDisplayTask.execute(toPass);
     }
 }
